@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  project: one
+  priority: MyString
+  severity: MyString
+  step_to_reproduce: MyText
+  expected_results: MyText
+  actual_result: MyText
+  attachment: MyString
+  reporter: 1
+  assignee: 1
+  status: MyString
+
+two:
+  title: MyString
+  description: MyText
+  project: two
+  priority: MyString
+  severity: MyString
+  step_to_reproduce: MyText
+  expected_results: MyText
+  actual_result: MyText
+  attachment: MyString
+  reporter: 1
+  assignee: 1
+  status: MyString
