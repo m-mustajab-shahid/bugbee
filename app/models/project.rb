@@ -6,4 +6,19 @@ class Project < ApplicationRecord
 
   has_and_belongs_to_many :users, dependent: :destroy
   has_many :bugs
+  def admin?
+    roles == "admin"
+  end
+
+  def project_manager?
+    roles == "project_manager"
+  end
+
+  def developer?
+    roles == "developer"
+  end
+
+  def tester?
+    roles == "tester"
+  end
 end

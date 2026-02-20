@@ -1,19 +1,26 @@
 class UsersController < ApplicationController
   layout "admin"
+  before_action :authenticate_user!
   before_action :set_user, only: [ :edit,  :show, :update, :destroy ]
 
   def index
-    @users = User.all
+    authorize User
+    per_page = params[:per_page].present? ? params[:per_page].to_i : 3
+    @users = User.all.page(params[:page]).per(per_page)
   end
-
   def show
+        authorize User
   end
 
   def new
+        authorize User
+
     @user = User.new
   end
 
 def createUser
+      authorize User
+
   @user = User.new(
     full_name: params[:full_name],
     email: params[:email],
@@ -34,9 +41,12 @@ end
 
 
   def edit
+        authorize User
   end
 
 def update
+      authorize User
+
   filtered_params = user_params
 
   if filtered_params[:password].blank?
@@ -54,6 +64,8 @@ end
 
 
 def destroy
+      authorize User
+
   @user = User.find(params[:id])
   @user.destroy
   redirect_to users_path, notice: "User deleted successfully!"

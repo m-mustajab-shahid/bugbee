@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-# config/routes.rb
 resources :projects do
   member do
     post :add_users
@@ -7,6 +6,10 @@ resources :projects do
   end
   resources :bugs do
     patch :assign_developer, on: :member
+    patch :changet_to_in_progress, on: :member
+    patch :change_to_close, on: :member
+    patch :change_to_reopen, on: :member
+    patch :change_to_resolve, on: :member
   end
 end
 

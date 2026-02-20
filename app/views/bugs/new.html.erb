@@ -45,19 +45,10 @@
                         <%= f.label :step_to_reproduce, "Step to reproduce", class: "form-label" %>
                         <%= f.text_area :step_to_reproduce, class: "form-control" %>
                     </div>
-                    <div class="mb-3">
-                        <%= f.label :status, class: "form-label" %>
-                        <%= f.select :status,
-                    [["Open", "open"],
-                     ["Assigned", "assigned"],
-                     ["In-Progress", "in-progress"],
-                     ["Closed", "closed"],
-                     ["Reopened", "reopened"],
-                     ["Resolved", "resolved"]],
-                    { prompt: "Select Status" },
-                    class: "form-select form-control" %>
-                    </div>
 
+                    <%= f.hidden_field :status, value: "open" %>
+
+                    
                 </div>
 
                 <!-- Right Column -->

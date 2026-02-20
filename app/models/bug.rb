@@ -12,4 +12,21 @@ class Bug < ApplicationRecord
              class_name: "User",
              foreign_key: "assignee_id",
              optional: true
+
+
+  def admin?
+    roles == "admin"
+  end
+
+  def project_manager?
+    roles == "project_manager"
+  end
+
+  def developer?
+    roles == "developer"
+  end
+
+  def tester?
+    roles == "tester"
+  end
 end

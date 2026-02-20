@@ -1,16 +1,21 @@
 class ProjectsController < ApplicationController
   layout "admin"
+  before_action :authenticate_user!
   before_action :set_project, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @projects = Project.all
+    per_page = params[:per_page].present? ? params[:per_page].to_i : 3
+  @projects = current_user.projects.page(params[:page]).per(per_page)
   end
 
   def new
+            authorize Project
+
     @project = Project.new
   end
 
   def create
+    authorize Project
     @project = Project.new(project_params)
     @project.users << current_user if current_user
     if @project.save
@@ -27,9 +32,12 @@ class ProjectsController < ApplicationController
   end
 
   def edit
+    authorize Project
   end
 
   def update
+    authorize Project
+
     if Project.update(project_params)
     redirect_to projects_path, notice: "Project was updated created!"
     else
@@ -65,6 +73,8 @@ end
 
 
 def destroy
+      authorize Project
+
   @project.destroy
   redirect_to projects_path, notice: "Project deleted successfully!"
 end
