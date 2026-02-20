@@ -1,0 +1,97 @@
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Project: <%= @project.name %></h1>
+        <%= link_to "Edit Project", edit_project_path(@project), class: "btn btn-success btn-sm" %>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Project Bugs</h6>
+            <%= link_to "Bugs", project_bugs_path(@project), class: "btn btn-primary btn-sm" %>               
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> <%= @project.name %></p>
+            <p><strong>Start Date:</strong> <%= @project.start_date.strftime("%d %b %Y") %></p>
+            <p><strong>End Date:</strong> <%= @project.end_date.strftime("%d %b %Y") %></p>
+            <p><strong>Status:</strong> <%= @project.status.capitalize %></p>
+            <p><strong>Description:</strong> <%= @project.description || "-" %></p>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Associated Users</h6>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                Add Users
+            </button>
+        </div>
+
+        <div class="card-body table-responsive">
+            <% if @users.any? %>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @users.each do |user| %>
+                    <tr>
+                        <td><%= user.full_name %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.roles.humanize %></td>
+                        <td><%= user.status ? "Active" : "Inactive" %></td>
+                        <td class="d-flex">
+                            <%= button_to "Remove",
+              remove_users_project_path(@project, user),
+              method: :delete,
+              class: "btn btn-danger mx-2",
+              form: { data: { turbo_confirm: "Are you sure?" } } %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <% else %>
+            <p>No users are assigned to this project yet.</p>
+            <% end %>
+        </div>
+    </div>
+
+    <%= link_to "Back to Projects", projects_path, class: "btn btn-secondary" %>
+</div>
+
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add Users to <%= @project.name %></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <%= form_with url: add_users_project_path(@project), method: :post, local: true do |f| %>
+            <div class="modal-body">
+                <% if @available_users.any? %>
+                <% @available_users.each do |user| %>
+                <div class="form-check">
+                    <%= check_box_tag "user_ids[]", user.id, false, class: "form-check-input", id: "user_#{user.id}" %>
+                    <%= label_tag "user_#{user.id}", "#{user.full_name} (#{user.email})", class: "form-check-label" %>
+                </div>
+                <% end %>
+                <% else %>
+                <p>All users are already assigned to this project.</p>
+                <% end %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <%= f.submit "Add Selected Users", class: "btn btn-primary" %>
+            </div>
+            <% end %>
+        </div>
+    </div>
+</div>

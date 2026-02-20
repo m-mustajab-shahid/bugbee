@@ -1,0 +1,96 @@
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Edit Project</h1>
+
+    <%# Flash Messages %>
+    <% if flash[:notice] %>
+    <div class="alert alert-success"><%= flash[:notice] %></div>
+    <% end %>
+
+    <% if flash[:alert] %>
+    <div class="alert alert-danger"><%= flash[:alert] %></div>
+    <% end %>
+
+    <%# Validation Errors %>
+    <% if @project.errors.any? %>
+    <div class="alert alert-danger">
+        <h5><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h5>
+        <ul>
+            <% @project.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+            <% end %>
+        </ul>
+    </div>
+    <% end %>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+
+            <%= form_with model: @project, local: true do |f| %>
+
+            <div class="row">
+
+                <!-- Left Column -->
+                <div class="col-lg-6 mb-4">
+
+                    <div class="mb-3">
+                        <%= f.label :name, class: "form-label" %>
+                        <%= f.text_field :name, class: "form-control" %>
+                    </div>
+
+                    <div class="mb-3">
+                        <%= f.label :end_date, "End Date", class: "form-label" %>
+                        <%= f.date_field :end_date, class: "form-control" %>
+                    </div>
+                         <div class="mb-3">
+                        <%= f.label :description, "Description", class: "form-label" %>
+                        <%= f.text_area :description, class: "form-control" %>
+                    </div>
+
+
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-lg-6 mb-4">
+
+                    <div class="mb-3">
+                        <%= f.label :start_date, "Start Date", class: "form-label" %>
+                        <%= f.date_field :start_date, class: "form-control" %>
+                    </div>
+                    <div class="mb-3">
+                        <%= f.label :status, class: "form-label d-block" %>
+
+                        <div class="form-check form-check-inline">
+                            <%= f.radio_button :status, 'active', class: "form-check-input", id: "status_active" %>
+                            <%= f.label :status_active, "Active", class: "form-check-label" %>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <%= f.radio_button :status, "completed", class: "form-check-input", id: "status_completed" %>
+                            <%= f.label :status_completed, "Completed", class: "form-check-label" %>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <%= f.radio_button :status, "archived", class: "form-check-input", id: "status_archived" %>
+                            <%= f.label :status_archived, "Archived", class: "form-check-label" %>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-12 mt-3">
+                    <%= f.submit "Submit", class: "btn btn-primary" %>
+                </div>
+
+            </div>
+
+            <% end %>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePass(id) {
+        var x = document.getElementById(id);
+        x.type = (x.type === "password") ? "text" : "password";
+    }
+</script>

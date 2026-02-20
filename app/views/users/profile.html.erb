@@ -6,6 +6,13 @@
         <h1 class="h3 mb-0 text-gray-800">Profile</h1>
 
     </div>
+<% if flash[:alert] %>
+  <div id="error_explanation">
+    <p><%= flash[:alert] %></p>
+  </div>
+<% end %>
+
+
     <!-- Content Row -->
 
     <div class="row">
@@ -39,32 +46,33 @@
             <div class="mb-3">
                 <%= f.label :password, class:"form-label" %>
                 <%= f.password_field :password, class: "form-control", id: "passwordInput" %>
+                <div id="password-error" style="color: red; font-size: 0.8rem;"></div>
                 <input type="checkbox" class="mx-1" onclick="showPassword()">Show Password
 
             </div>
-       
+
 
         </div>
         <div class="col-lg-6 mb-4">
 
             <div class="mb-3">
                 <%= f.label :email, class:"form-label" %>
-                <%= f.email_field :email, value: current_user.email ,class: "form-control" %>
+                <input type="email" value=<%=current_user.email%> class="form-control" disabled  %>
             </div>
             <div class="mb-3">
                 <%= f.label :confirmPassword, class:"form-label" %>
                 <%= f.password_field :confirmPassword, class: "form-control", id: "confirmPasswordInput" %>
                 <input type="checkbox" class="mx-1" onclick="showConfirmPassword()">Show Password
             </div>
-        
+
         </div>
         <div class="col-lg-6 mb-4">
 
             <div class="mb-3">
                 <%= f.submit "Submit", class:"btn btn-primary" %>
             </div>
-            
-        
+
+
         </div>
     </div>
 

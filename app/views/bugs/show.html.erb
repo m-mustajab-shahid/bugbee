@@ -1,0 +1,74 @@
+<div class="container-fluid">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Bug: <%= @bug.title %></h1>
+
+        <div>
+            <%= link_to "Edit", edit_project_bug_path(@project, @bug), class: "btn btn-success btn-sm" %>
+            <%= link_to "Back to Bugs", project_bugs_path(@project), class: "btn btn-secondary btn-sm" %>
+        </div>
+    </div>
+
+    <!-- Bug Details Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Bug Details</h6>
+        </div>
+
+        <div class="card-body">
+
+            <p><strong>Title:</strong> <%= @bug.title %></p>
+            <p><strong>Description:</strong><br><%= @bug.description %></p>
+            <hr>
+
+            <p><strong>Priority:</strong>
+                <span class="badge bg-warning text-dark"><%= @bug.priority.capitalize %></span>
+            </p>
+
+            <p><strong>Severity:</strong>
+                <span class="badge bg-danger"><%= @bug.severity.capitalize %></span>
+            </p>
+
+            <p><strong>Status:</strong>
+                <span class="badge bg-info text-dark"><%= @bug.status.capitalize %></span>
+            </p>
+
+            <hr>
+
+            <p><strong>Project:</strong>
+                <%= link_to @project.name, project_path(@project) %>
+            </p>
+
+            <p><strong>Reported By:</strong> <%= @bug.reporter&.full_name || "N/A" %></p>
+
+            <p><strong>Assigned To:</strong>
+                <% if @bug.assignee.present? %>
+                <span class="badge bg-success"><%= @bug.assignee.full_name %></span>
+                <% else %>
+                <span class="badge bg-secondary">Unassigned</span>
+                <% end %>
+            </p>
+
+            <hr>
+
+            <p><strong>Steps to Reproduce:</strong><br><%= @bug.step_to_reproduce %></p>
+            <p><strong>Expected Result:</strong><br><%= @bug.expected_results %></p>
+            <p><strong>Actual Result:</strong><br><%= @bug.actual_result %></p>
+
+            <hr>
+
+            <!-- Assign Bug to Developer -->
+            <h6 class="font-weight-bold text-primary">Assign to Developer</h6>
+            <%= form_with model: [@project, @bug], url: assign_developer_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
+            <div class="mb-3">
+                <%= f.label :assignee_id, "Assign To", class: "form-label" %>
+                <%= f.collection_select :assignee_id, @developers, :id, :full_name, { prompt: "Select Developer" }, { class: "form-select" } %>
+            </div>
+
+            <%= f.submit "Assign Developer", class: "btn btn-primary btn-sm" %>
+            <% end %>
+
+        </div>
+    </div>
+
+</div>

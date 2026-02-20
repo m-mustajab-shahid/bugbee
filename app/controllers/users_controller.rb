@@ -1,15 +1,64 @@
 class UsersController < ApplicationController
+  layout "admin"
+  before_action :set_user, only: [ :edit,  :show, :update, :destroy ]
+
   def index
+    @users = User.all
   end
 
   def show
   end
 
   def new
+    @user = User.new
   end
+
+def createUser
+  @user = User.new(
+    full_name: params[:full_name],
+    email: params[:email],
+    password: params[:password],
+    password_confirmation: params[:password_confirmation],
+    roles: params[:roles],
+    status: params[:status]
+  )
+
+  if @user.save
+    redirect_to users_path, notice: "User was successfully created!"
+  else
+    flash.now[:alert] = @user.errors.full_messages.to_sentence
+    render :new, status: :unprocessable_entity
+  end
+end
+
+
 
   def edit
   end
+
+def update
+  filtered_params = user_params
+
+  if filtered_params[:password].blank?
+    filtered_params = filtered_params.except(:password, :password_confirmation)
+  end
+
+  if @user.update(filtered_params)
+    redirect_to users_path, notice: "User updated successfully!"
+  else
+    flash.now[:alert] = @user.errors.full_messages.to_sentence
+    render :edit, status: :unprocessable_entity
+  end
+end
+
+
+
+def destroy
+  @user = User.find(params[:id])
+  @user.destroy
+  redirect_to users_path, notice: "User deleted successfully!"
+end
+
 
 
 
@@ -19,40 +68,64 @@ class UsersController < ApplicationController
     @user = current_user
   end
 
-  def updateProfilePhoto
-    @uploaded_file = params[:profile_photo]
-
-    if @uploaded_file.present?
-      current_user.profile_photo.attach(@uploaded_file)
-
-      if current_user.save
-        flash[:success] = "Profile photo updated successfully!"
-      else
-        flash[:error] = "Something went wrong while saving."
-      end
-    else
-      flash[:alert] = "Please select a file first."
-    end
-    redirect_back(fallback_location: root_path)
-  end
-
-def updateProfile
+ def updateProfilePhoto
   @user = current_user
 
-  if @user.update(profile_params)
-    flash[:success] = "Profile updated successfully!"
-    redirect_to profile_path
+  if params[:profile_photo].present?
+    if @user.update(profile_photo: params[:profile_photo])
+      redirect_back(fallback_location: root_path, notice: "Photo updated successfully!")
+    else
+      flash[:alert] = @user.errors.full_messages.to_sentence
+      redirect_back(fallback_location: root_path)
+    end
   else
-    flash.now[:error] = "Something went wrong while saving."
-    render :profile, status: :unprocessable_entity
+    flash[:alert] = "Please select a file first."
+    redirect_back(fallback_location: root_path)
   end
-end
+ end
+
+
+  def updateProfile
+    @user = current_user
+
+    if @user.update(profile_params)
+      flash[:success] = "Profile updated successfully!"
+      redirect_to "/users/sign_in"
+    else
+      flash.now[:error] = "Something went wrong: #{@user.errors.full_messages.to_sentence}"
+
+      respond_to do |format|
+        format.html { render :profile, status: :unprocessable_entity }
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.prepend("toast-container",
+            partial: "shared/toast",
+            locals: { type: "error", message: flash.now[:error] })
+        }
+      end
+    end
+  end
+
 
 
 
   private
 
-def profile_params
-  params.permit(:full_name, :email, :password)
-end
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(
+      :full_name,
+      :email,
+      :password,
+      :password_confirmation,
+      :roles,
+      :status
+    )
+  end
+
+  def profile_params
+    params.permit(:full_name, :email, :password, :password_confirmation)
+  end
 end

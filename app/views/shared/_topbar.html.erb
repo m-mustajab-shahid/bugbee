@@ -24,7 +24,7 @@
                     <span class="mr-2 d-none d-lg-inline text-gray-600 small"><%= current_user.full_name %></span>
 
                     <% if current_user.profile_photo.present? %>
-                    <img class="img-profile rounded-circle" src="<%= current_user.profile_photo %>" style="width: 32px; height: 32px; object-fit: cover;">
+                    <%= image_tag current_user.profile_photo , class:"img-profile rounded-circle" ,style:"width: 32px; height: 32px; object-fit: cover;" %>
                     <% else %>
                     <div class="img-profile rounded-circle bg-primary d-inline-flex align-items-center justify-content-center text-white" style="width: 32px; height: 32px; font-size: 14px; font-weight: bold;">
                         <%= current_user.full_name.split.map(&:first).join.upcase %>
@@ -47,7 +47,7 @@
                         Activity Log
                     </a>
                     <div class="dropdown-divider"></div>
-                    <%= link_to "Sign Out", destroy_user_session_path, class:"dropdown-item text-danger", method: :delete %>
+<%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item text-danger" %>
                 </ul>
             </div>
         </li>
