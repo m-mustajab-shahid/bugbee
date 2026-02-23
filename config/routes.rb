@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 resources :projects do
   member do
     post :add_users
+    post :add_comments
     delete "remove_users/:user_id", to: "projects#remove_users", as: :remove_users
   end
   resources :bugs do
@@ -10,6 +11,7 @@ resources :projects do
     patch :change_to_close, on: :member
     patch :change_to_reopen, on: :member
     patch :change_to_resolve, on: :member
+    post :add_bug_comments, on: :member
   end
 end
 

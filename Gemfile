@@ -25,6 +25,9 @@ gem "kaminari"
 
 gem "pundit"
 
+gem "paranoia"
+
+
 gem "rubocop", "~> 1.82", ">= 1.82.1"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]

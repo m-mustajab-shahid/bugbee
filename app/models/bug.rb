@@ -3,7 +3,10 @@ class Bug < ApplicationRecord
   validates :severity, inclusion: { in: %w[minor major blocker], message: "%{value} is not a valid bug severity" }
   validates :status, inclusion: { in: %w[open in-progress assigned resolved closed reopened], message: "%{value} is not a valid bug status" }
   validates :title, presence: true
+  validates :title, length: { in: 5..150 }
 
+
+  has_many :comments, as: :commentable
   belongs_to :project
   belongs_to :reporter,
              class_name: "User",

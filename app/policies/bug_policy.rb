@@ -8,11 +8,11 @@ class BugPolicy < ApplicationPolicy
   end
 
   def create?
-    user.admin? || user.project_manager?
+    user.tester?
   end
 
   def update?
-    user.admin? || user.project_manager?
+    user.admin? || user.project_manager? || user.tester?
   end
 
   def destroy?

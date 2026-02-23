@@ -9,8 +9,7 @@ class ProjectsController < ApplicationController
   end
 
   def new
-            authorize Project
-
+    authorize Project
     @project = Project.new
   end
 
@@ -29,6 +28,7 @@ class ProjectsController < ApplicationController
   def show
     @users = @project.users
     @available_users = User.where.not(id: @users.pluck(:id))
+    @comments = @project.comments
   end
 
   def edit
@@ -69,6 +69,18 @@ def remove_users
     redirect_to @project, alert: "Error removing user."
   end
 end
+
+def add_comments
+  @project = Project.find(params[:id])
+    @comment = @project.comments.new(body: params[:body], user_id: current_user.id)
+
+  if @comment.save
+    redirect_to @project, notice: "Comment added successfully!"
+  else
+    redirect_to @project, alert: "Error adding comment."
+  end
+end
+
 
 
 

@@ -43,6 +43,12 @@
             <p><strong>Severity:</strong>
                 <span class="badge bg-danger"><%= @bug.severity.capitalize %></span>
             </p>
+            <p><strong>Start Date:</strong>
+                <span class="badge bg-primary"><%= @bug.start_date %></span>
+            </p>
+            <p><strong>End Date:</strong>
+                <span class="badge bg-success"><%= @bug.end_date %></span>
+            </p>
 
             <p><strong>Status:</strong>
                 <span class="badge bg-info text-dark"><%= @bug.status.capitalize %></span>
@@ -63,29 +69,40 @@
                 <span class="badge bg-secondary">Unassigned</span>
                 <% end %>
             </p>
-            <% if current_user.roles == "developer" %>
+            <% if current_user.roles == "developer"%>
+            <% if @bug.status != "in-progress" && @bug.status != "resolved"%>
+
             <%= form_with model: [@project, @bug], url: changet_to_in_progress_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
             <%= f.hidden_field :status,value: "in-progress" %>
             <%= f.submit "Change to In-progress", class: "btn btn-primary btn-sm" %>
             <%end%>
+            <%end%>
             <div class="mb-2">
-                
+
             </div>
+            <% if @bug.status == "in-progress"%>
+
             <%= form_with model: [@project, @bug], url: change_to_resolve_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
             <%= f.hidden_field :status,value: "resolved" %>
             <%= f.submit "Change to Resolved", class: "btn btn-success btn-sm" %>
             <%end%>
             <%end%>
+            <%end%>
             </p>
-            <% if current_user.roles == "admin" || current_user.roles == "project_manager" %>
+            <% if current_user.roles == "admin" || current_user.roles == "project_manager"%>
+            <% if @bug.status == "resolved"%>
+
             <%= form_with model: [@project, @bug], url: change_to_close_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
             <%= f.hidden_field :status,value: "closed" %>
             <%= f.submit "Change to Close", class: "btn btn-primary btn-sm" %>
             <%end%>
+            <%end%>
             </p>
+            <% if @bug.status == "assigned" || @bug.status == "resolved"%>
             <%= form_with model: [@project, @bug], url: change_to_reopen_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
             <%= f.hidden_field :status,value: "reopened" %>
             <%= f.submit "Change to Reopen", class: "btn btn-warning btn-sm" %>
+            <% end %>
             <%end%>
             <%end%>
 
@@ -115,5 +132,60 @@
 
         </div>
     </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Comments</h6>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCommentModal">
+                Add Comments
+            </button>
+        </div>
 
+        <div class="card-body table-responsive">
+            <% if @comments.any? %>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Body</th>
+                        <th>Author</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @comments.each do |comment| %>
+                    <tr>
+                        <td style="width: 70%"><%= comment.body %></td>
+                        <td><%= comment.user.full_name %></td>
+
+                        <% end %>
+                </tbody>
+            </table>
+            <% else %>
+            <p>No comment found for this bug</p>
+            <% end %>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="modal fade" id="addCommentModal" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add Comments to <%= @project.name %></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <%= form_with model: [@project, @bug], url: add_bug_comments_project_bug_path(@project, @bug), method: :post, local: true do |f| %>
+            <div class="modal-body">
+                <%= f.label :body, class:"input-label" %> <br />
+                <%= f.text_area :body, class:"form-control" %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <%= f.submit "Add Comment", class: "btn btn-primary" %>
+            </div>
+            <% end %>
+        </div>
+    </div>
 </div>
