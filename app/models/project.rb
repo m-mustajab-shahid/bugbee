@@ -1,10 +1,12 @@
 class Project < ApplicationRecord
-  validates :status, inclusion: { in: %w[active completed archived], message: "%{value} is not a valid project status" }
+  # Validations
+  enum :status, { active: "active", completed: "completed", archived: "archived" }
   validates :name, presence: true, on: :create
   validates :start_date, presence: true
   validates :end_date, comparison: { greater_than: :start_date }
-  has_many :comments, as: :commentable
 
+  # Relationships
+  has_many :comments, as: :commentable
   has_and_belongs_to_many :users, dependent: :destroy
   has_many :bugs
 
@@ -25,4 +27,4 @@ class Project < ApplicationRecord
   end
 end
 
-# TODO: convert status field into enum
+# TODO: convert status field into enum (Done)

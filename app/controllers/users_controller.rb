@@ -8,26 +8,14 @@ class UsersController < ApplicationController
     per_page = params[:per_page].present? ? params[:per_page].to_i : 3
     @users = User.all.page(params[:page]).per(per_page)
   end
-  def show
-        authorize User
-  end
 
   def new
-        authorize User
-
+    authorize User
     @user = User.new
   end
 
   def create_user
-    @user = User.new(
-      full_name: params[:full_name],
-      email: params[:email],
-      password: params[:password],
-      password_confirmation: params[:password_confirmation],
-      role: params[:role],
-      status: params[:status]
-    )
-
+    @user = User.new(user_params)
     if @user.save
       redirect_to users_path, notice: "User was successfully created!"
     else
@@ -37,18 +25,15 @@ class UsersController < ApplicationController
   end
 
   def edit
-        authorize User
+    authorize User
   end
 
   def update
-        authorize User
-
+    authorize User
     filtered_params = user_params
-
     if filtered_params[:password].blank?
       filtered_params = filtered_params.except(:password, :password_confirmation)
     end
-
     if @user.update(filtered_params)
       redirect_to users_path, notice: "User updated successfully!"
     else
@@ -58,8 +43,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-        authorize User
-
+    authorize User
     @user = User.find(params[:id])
     @user.destroy
     redirect_to users_path, notice: "User deleted successfully!"
@@ -72,7 +56,6 @@ class UsersController < ApplicationController
 
   def update_profile_photo
     @user = current_user
-
     if params[:profile_photo].present?
       if @user.update(profile_photo: params[:profile_photo])
         redirect_back(fallback_location: root_path, notice: "Photo updated successfully!")
@@ -88,13 +71,11 @@ class UsersController < ApplicationController
 
   def update_profile
     @user = current_user
-
     if @user.update(profile_params)
       flash[:success] = "Profile updated successfully!"
       redirect_to "/users/sign_in"
     else
       flash.now[:error] = "Something went wrong: #{@user.errors.full_messages.to_sentence}"
-
       respond_to do |format|
         format.html { render :profile, status: :unprocessable_entity }
         format.turbo_stream {

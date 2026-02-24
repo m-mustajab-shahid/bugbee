@@ -3,7 +3,6 @@ class User < ApplicationRecord
   validates :full_name, :email, presence: true
   validates :password, presence: true, confirmation: true, length: { minimum: 8 }, on: :create
   validates :password, presence: true, confirmation: true, length: { minimum: 8 }, allow_blank: true, on: :update
-  validates :role, inclusion: { in: %w[admin project_manager developer tester], message: "%{value} is not a valid role" }
   enum :role, {
     admin: "admin",
     project_manager: "project manager",

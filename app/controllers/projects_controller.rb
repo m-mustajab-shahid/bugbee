@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
 
   def index
     per_page = params[:per_page].present? ? params[:per_page].to_i : 3
-  @projects = current_user.projects.page(params[:page]).per(per_page)
+    @projects = current_user.projects.page(params[:page]).per(per_page)
   end
 
   def new
@@ -18,10 +18,10 @@ class ProjectsController < ApplicationController
     @project = Project.new(project_params)
     @project.users << current_user if current_user
     if @project.save
-    redirect_to projects_path, notice: "Project was successfully created!"
+      redirect_to projects_path, notice: "Project was successfully created!"
     else
-    flash.now[:alert] = @project.errors.full_messages.to_sentence
-    render :new, status: :unprocessable_entity
+      flash.now[:alert] = @project.errors.full_messages.to_sentence
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -37,63 +37,52 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    authorize Project
-
-    if Project.update(project_params)
-    redirect_to projects_path, notice: "Project was updated created!"
+    if @project.update(project_params)
+      redirect_to projects_path, notice: "Project was updated created!"
     else
-    flash.now[:alert] = @project.errors.full_messages.to_sentence
-    render :new, status: :unprocessable_entity
+      flash.now[:alert] = @project.errors.full_messages.to_sentence
+      render :new, status: :unprocessable_entity
     end
   end
 
+  def destroy
+    authorize Project
+    @project.destroy
+    redirect_to projects_path, notice: "Project deleted successfully!"
+  end
 
   def add_users
-  @project = Project.find(params[:id])
-  user_ids = params[:user_ids] || []
+    @project = Project.find(params[:id])
+    user_ids = params[:user_ids] || []
 
-  if user_ids.any?
-    @project.user_ids += user_ids.map(&:to_i)
-    redirect_to @project, notice: "#{user_ids.size} user(s) added to project successfully!"
-  else
-    redirect_to @project, alert: "No users selected."
+    if user_ids.any?
+      @project.user_ids += user_ids.map(&:to_i)
+      redirect_to @project, notice: "#{user_ids.size} user(s) added to project successfully!"
+    else
+      redirect_to @project, alert: "No users selected."
+    end
   end
+
+  def remove_users
+    @project = Project.find(params[:id])
+    user = User.find(params[:user_id])
+
+    if @project.users.delete(user)
+      redirect_to @project, notice: "User removed successfully."
+    else
+      redirect_to @project, alert: "Error removing user."
+    end
   end
 
-def remove_users
-  @project = Project.find(params[:id])
-  user = User.find(params[:user_id])
-
-  if @project.users.delete(user)
-    redirect_to @project, notice: "User removed successfully."
-  else
-    redirect_to @project, alert: "Error removing user."
+  def add_comments
+    @project = Project.find(params[:id])
+      @comment = @project.comments.new(body: params[:body], user_id: current_user.id)
+    if @comment.save
+      redirect_to @project, notice: "Comment added successfully!"
+    else
+      redirect_to @project, alert: "Error adding comment."
+    end
   end
-end
-
-def add_comments
-  @project = Project.find(params[:id])
-    @comment = @project.comments.new(body: params[:body], user_id: current_user.id)
-
-  if @comment.save
-    redirect_to @project, notice: "Comment added successfully!"
-  else
-    redirect_to @project, alert: "Error adding comment."
-  end
-end
-
-
-
-
-def destroy
-      authorize Project
-
-  @project.destroy
-  redirect_to projects_path, notice: "Project deleted successfully!"
-end
-
-
-
 
   private
 
