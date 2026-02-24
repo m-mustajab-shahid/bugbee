@@ -31,8 +31,9 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  config.action_mailer.perform_deliveries = true
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
@@ -84,6 +85,7 @@ config.action_mailer.smtp_settings = {
   address: "sandbox.smtp.mailtrap.io",
   host: "sandbox.smtp.mailtrap.io",
   port: "2525",
-  authentication: :login
+  authentication: :login,
+  openssl_verify_mode:  "none"
 }
 end

@@ -4,20 +4,20 @@
         <h1 class="h3 mb-0 text-gray-800">Project: <%= @project.name %></h1>
         <%= link_to "Edit Project", edit_project_path(@project), class: "btn btn-success btn-sm" %>
     </div>
- <!-- Flash Messages -->
-                    <% if flash[:notice] %>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <%= flash[:notice] %>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <% end %>
+    <!-- Flash Messages -->
+    <% if flash[:notice] %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= flash[:notice] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% end %>
 
-                    <% if flash[:alert] %>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <%= flash[:alert] %>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <% end %>
+    <% if flash[:alert] %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= flash[:alert] %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% end %>
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Project Bugs</h6>
@@ -87,23 +87,36 @@
 
         <div class="card-body table-responsive">
             <% if @comments.any? %>
+            <div class="mb-3 d-flex justify-content-end">
+                <form method="get" class="form-inline">
+                    <label class="mr-2" for="per_page">Comments per page:</label>
+                    <select name="per_page" id="per_page" class="form-control form-control-sm" onchange="this.form.submit()">
+                        <% [3, 5, 10, 20, 50].each do |limit| %>
+                        <option value="<%= limit %>" <%= 'selected' if params[:per_page].to_i == limit %>><%= limit %></option>
+                        <% end %>
+                    </select>
+                </form>
+            </div>
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>Body</th>
                         <th>Author</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
                     <% @comments.each do |comment| %>
                     <tr>
                         <td style="width: 70%"><%= comment.body %></td>
-                        <td><%= comment.user.full_name %></td>
-                       
-                    <% end %>
+                        <td><%= comment.user.full_name %> <br /><span style="font-size: 10px"><%= comment.created_at%></span></td>
+
+                        <% end %>
                 </tbody>
             </table>
+            <div class="d-flex justify-content-center mt-3">
+                <%= paginate @comments %>
+            </div>
             <% else %>
             <p>No users are assigned to this project yet.</p>
             <% end %>
@@ -127,7 +140,7 @@
                 <% @available_users.each do |user| %>
                 <div class="form-check">
                     <%= check_box_tag "user_ids[]", user.id, false, class: "form-check-input", id: "user_#{user.id}" %>
-                    <%= label_tag "user_#{user.id}", "#{user.full_name} (#{user.email})", class: "form-check-label" %>
+                    <%= label_tag "user_#{user.id}", "#{user.full_name} (#{user.email}) (#{user.roles})", class: "form-check-label" %>
                 </div>
                 <% end %>
                 <% else %>

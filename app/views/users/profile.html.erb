@@ -6,11 +6,26 @@
         <h1 class="h3 mb-0 text-gray-800">Profile</h1>
 
     </div>
-<% if flash[:alert] %>
-  <div id="error_explanation">
-    <p><%= flash[:alert] %></p>
-  </div>
-<% end %>
+    <%# Flash Messages %>
+    <% if flash[:notice] %>
+    <div class="alert alert-success"><%= flash[:notice] %></div>
+    <% end %>
+
+    <% if flash[:alert] %>
+    <div class="alert alert-danger"><%= flash[:alert] %></div>
+    <% end %>
+
+    <%# Validation Errors %>
+    <% if @user.errors.any? %>
+    <div class="alert alert-danger">
+        <h5><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h5>
+        <ul>
+            <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+            <% end %>
+        </ul>
+    </div>
+    <% end %>
 
 
     <!-- Content Row -->
@@ -57,7 +72,7 @@
 
             <div class="mb-3">
                 <%= f.label :email, class:"form-label" %>
-                <input type="email" value=<%=current_user.email%> class="form-control" disabled  %>
+                <input type="email" value=<%=current_user.email%> class="form-control" disabled %>
             </div>
             <div class="mb-3">
                 <%= f.label :confirmPassword, class:"form-label" %>

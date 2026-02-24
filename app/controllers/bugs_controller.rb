@@ -2,11 +2,14 @@ class BugsController < ApplicationController
   layout "admin"
   before_action :authenticate_user!
   before_action :set_bug, only: [ :show, :edit, :update, :destroy, :assign_developer, :changet_to_in_progress, :change_to_close, :change_to_reopen, :change_to_resolve ]
+
 def index
   @project = Project.find(params[:project_id])
   per_page = params[:per_page].presence || 3
 
   @bugs = Bug.where(project_id: params[:project_id])
+
+  # TODO: Move it to model level scopes
   if current_user.roles == "developer"
     @bugs = @bugs.where(assignee_id: current_user.id)
   end
@@ -18,6 +21,9 @@ def index
   @bugs = @bugs.where(priority: params[:priority]) if params[:priority].present?
   @bugs = @bugs.where(severity: params[:severity]) if params[:severity].present?
   @bugs = @bugs.where(assignee_id: params[:assignee_id]) if params[:assignee_id].present?
+  if params[:start_date].present? && params[:end_date].present?
+    @bugs = @bugs.where(start_date: params[:start_date]..params[:end_date])
+  end
   @bugs = @bugs.where("title LIKE ?", params[:search] + "%") if params[:search].present?
 
   @bugs = @bugs.page(params[:page]).per(per_page)
@@ -27,7 +33,8 @@ end
   def show
   @project = Project.find(params[:project_id])
   @developers = @project.users.where(roles: "developer").where(status: true)
-  @comments = @bug.comments
+  per_page = params[:per_page].presence || 3
+  @comments = @bug.comments.page(params[:page]).per(per_page)
   end
 
   def new
@@ -96,7 +103,7 @@ end
     @bug.status = "assigned"
     @user = User.find(params[:bug][:assignee_id])
     if @bug.update(assignee_id: params[:bug][:assignee_id])
-      NotifierMailer.welcome_email(@user).deliver_now
+      NotifierMailer.welcome_email(@user, @bug, @project).deliver_now
       redirect_to project_bug_path(@project, @bug), notice: "Developer assigned successfully!"
     else
       flash.now[:alert] = @bug.errors.full_messages.to_sentence
@@ -148,6 +155,8 @@ end
       render :show, status: :unprocessable_entity
     end
   end
+
+  # TODO: Convert into State Machine (AASM) + single API
 
   def destroy
           authorize User

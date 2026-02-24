@@ -28,7 +28,8 @@ class ProjectsController < ApplicationController
   def show
     @users = @project.users
     @available_users = User.where.not(id: @users.pluck(:id))
-    @comments = @project.comments
+    per_page = params[:per_page].present? ? params[:per_page].to_i : 3
+    @comments = @project.comments.page(params[:page]).per(per_page)
   end
 
   def edit

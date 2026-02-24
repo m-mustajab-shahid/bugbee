@@ -25,16 +25,7 @@
                     <div class="card shadow mb-4">
 
                         <div class="card-body">
-                            <div class="mb-3 d-flex justify-content-end">
-                                <form method="get" class="form-inline">
-                                    <label class="mr-2" for="per_page">Users per page:</label>
-                                    <select name="per_page" id="per_page" class="form-control form-control-sm" onchange="this.form.submit()">
-                                        <% [3, 5, 10, 20, 50].each do |limit| %>
-                                        <option value="<%= limit %>" <%= 'selected' if params[:per_page].to_i == limit %>><%= limit %></option>
-                                        <% end %>
-                                    </select>
-                                </form>
-                            </div>
+              
                             <h4>Filters</h4>
                             <%= form_with url: project_bugs_path(@project), method: :get, local: true, class: "form-inline mb-4" do |f| %>
                             <%= f.select :status, ["open", "in-progress", "assigned" ,"resolved", "closed"], 
@@ -52,8 +43,7 @@
                             <%= f.collection_select :assignee_id, User.all, :id, :full_name, 
       { include_blank: "Assignee", selected: params[:assignee_id] }, 
       { class: "form-control mr-2" } %>
-                            <%
-=begin%>
+                        
                             <div class="input-group mr-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">From</span>
@@ -67,8 +57,7 @@
                                 </div>
                                 <%= f.date_field :end_date, value: params[:end_date], class: "form-control" %>
                             </div>
-                            <%
-=end%>
+              
 
 
                             <%= f.submit "Filter", class: "btn btn-outline-primary" %>
@@ -87,7 +76,16 @@
                             <% end %>
 
 
-
+                            <div class="mb-3 d-flex justify-content-end">
+                                <form method="get" class="form-inline">
+                                    <label class="mr-2" for="per_page">Bugs per page:</label>
+                                    <select name="per_page" id="per_page" class="form-control form-control-sm" onchange="this.form.submit()">
+                                        <% [3, 5, 10, 20, 50].each do |limit| %>
+                                        <option value="<%= limit %>" <%= 'selected' if params[:per_page].to_i == limit %>><%= limit %></option>
+                                        <% end %>
+                                    </select>
+                                </form>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead class="thead-light">
@@ -95,6 +93,8 @@
                                             <th>Title</th>
                                             <th>Priority</th>
                                             <th>Severity</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -104,6 +104,8 @@
                                             <th>Title</th>
                                             <th>Priority</th>
                                             <th>Severity</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -114,6 +116,8 @@
                                             <td><%= bug.title %></td>
                                             <td><%= bug.priority %></td>
                                             <td><%= bug.severity %></td>
+                                            <td><%= bug.start_date %></td>
+                                            <td><%= bug.end_date %></td>
                                             <td style="text-transform: capitalize"><%= bug.status %></td>
                                             <td class="d-flex">
                                                 <%= link_to "Show", project_bug_path(bug.project, bug), class: "btn btn-primary" %>

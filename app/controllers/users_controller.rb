@@ -19,8 +19,6 @@ class UsersController < ApplicationController
   end
 
 def createUser
-      authorize User
-
   @user = User.new(
     full_name: params[:full_name],
     email: params[:email],
