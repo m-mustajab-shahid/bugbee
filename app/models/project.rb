@@ -5,22 +5,24 @@ class Project < ApplicationRecord
   validates :end_date, comparison: { greater_than: :start_date }
   has_many :comments, as: :commentable
 
-
   has_and_belongs_to_many :users, dependent: :destroy
   has_many :bugs
+
   def admin?
-    roles == "admin"
+    role == "admin"
   end
 
   def project_manager?
-    roles == "project_manager"
+    role == "project_manager"
   end
 
   def developer?
-    roles == "developer"
+    role == "developer"
   end
 
   def tester?
-    roles == "tester"
+    role == "tester"
   end
 end
+
+# TODO: convert status field into enum

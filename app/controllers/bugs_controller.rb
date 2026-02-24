@@ -10,13 +10,14 @@ def index
   @bugs = Bug.where(project_id: params[:project_id])
 
   # TODO: Move it to model level scopes
-  if current_user.roles == "developer"
+  if current_user.role == "developer"
     @bugs = @bugs.where(assignee_id: current_user.id)
   end
-  if current_user.roles == "tester"
+  if current_user.role == "tester"
     @bugs = @bugs.where(reporter_id: current_user.id)
   end
 
+  # TODO: convert into single filter map (OPTIONAL)
   @bugs = @bugs.where(status: params[:status]) if params[:status].present?
   @bugs = @bugs.where(priority: params[:priority]) if params[:priority].present?
   @bugs = @bugs.where(severity: params[:severity]) if params[:severity].present?
@@ -32,7 +33,7 @@ end
 
   def show
   @project = Project.find(params[:project_id])
-  @developers = @project.users.where(roles: "developer").where(status: true)
+  @developers = @project.users.where(role: "developer").where(status: true)
   per_page = params[:per_page].presence || 3
   @comments = @bug.comments.page(params[:page]).per(per_page)
   end

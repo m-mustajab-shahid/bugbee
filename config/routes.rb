@@ -23,8 +23,8 @@ end
 
   # User routes
   resources :users
-  post "/create-user", to: "users#createUser", as: "create_user"
+  post "/create-user", to: "users#create_user", as: "create_user"
   get "/profile", to: "users#profile", as: "profile"
-  post "/update-profile-photo", to: "users#updateProfilePhoto", as: "update_profile_photo"
-  post "/update-profile", to: "users#updateProfile", as: "update_profile"
+  post "/update-profile-photo", to: "users#update_profile_photo", as: "update_profile_photo"
+  post "/update-profile", to: "users#update_profile", as: "update_profile"
 end

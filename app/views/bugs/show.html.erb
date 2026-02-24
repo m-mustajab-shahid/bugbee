@@ -69,7 +69,7 @@
                 <span class="badge bg-secondary">Unassigned</span>
                 <% end %>
             </p>
-            <% if current_user.roles == "developer"%>
+            <% if current_user.role == "developer"%>
             <% if @bug.status != "in-progress" && @bug.status != "resolved"%>
 
             <%= form_with model: [@project, @bug], url: changet_to_in_progress_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
@@ -89,7 +89,7 @@
             <%end%>
             <%end%>
             </p>
-            <% if current_user.roles == "admin" || current_user.roles == "project_manager"%>
+            <% if current_user.role == "admin" || current_user.role == "project_manager"%>
             <% if @bug.status == "resolved"%>
 
             <%= form_with model: [@project, @bug], url: change_to_close_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
@@ -113,7 +113,7 @@
             <p><strong>Actual Result:</strong><br><%= @bug.actual_result %></p>
 
             <hr>
-            <% if current_user.roles == "admin" || current_user.roles == "project_manager" %>
+            <% if current_user.role == "admin" || current_user.role == "project_manager" %>
 
             <!-- Assign Bug to Developer -->
             <h6 class="font-weight-bold text-primary">Assign to Developer</h6>

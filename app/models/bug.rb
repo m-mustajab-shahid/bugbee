@@ -17,18 +17,18 @@ class Bug < ApplicationRecord
              optional: true
 
   def admin?
-    roles == "admin"
+    role == "admin"
   end
 
   def project_manager?
-    roles == "project_manager"
+    role == "project_manager"
   end
 
   def developer?
-    roles == "developer"
+    role == "developer"
   end
 
   def tester?
-    roles == "tester"
+    role == "tester"
   end
 end

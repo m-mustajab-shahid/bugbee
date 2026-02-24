@@ -31,7 +31,7 @@
             <p><strong>Description:</strong> <%= @project.description || "-" %></p>
         </div>
     </div>
-    <% if current_user.roles == "admin" || current_user.roles == "project_manager" %>
+    <% if current_user.role == "admin" || current_user.role == "project_manager" %>
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Associated Users</h6>
@@ -57,7 +57,7 @@
                     <tr>
                         <td><%= user.full_name %></td>
                         <td><%= user.email %></td>
-                        <td><%= user.roles.humanize %></td>
+                        <td><%= user.role.humanize %></td>
                         <td><%= user.status ? "Active" : "Inactive" %></td>
                         <td class="d-flex">
                             <%= button_to "Remove",
@@ -140,7 +140,7 @@
                 <% @available_users.each do |user| %>
                 <div class="form-check">
                     <%= check_box_tag "user_ids[]", user.id, false, class: "form-check-input", id: "user_#{user.id}" %>
-                    <%= label_tag "user_#{user.id}", "#{user.full_name} (#{user.email}) (#{user.roles})", class: "form-check-label" %>
+                    <%= label_tag "user_#{user.id}", "#{user.full_name} (#{user.email}) (#{user.role})", class: "form-check-label" %>
                 </div>
                 <% end %>
                 <% else %>

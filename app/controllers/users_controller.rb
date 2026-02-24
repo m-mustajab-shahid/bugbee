@@ -18,84 +18,75 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
-def createUser
-  @user = User.new(
-    full_name: params[:full_name],
-    email: params[:email],
-    password: params[:password],
-    password_confirmation: params[:password_confirmation],
-    roles: params[:roles],
-    status: params[:status]
-  )
+  def create_user
+    @user = User.new(
+      full_name: params[:full_name],
+      email: params[:email],
+      password: params[:password],
+      password_confirmation: params[:password_confirmation],
+      role: params[:role],
+      status: params[:status]
+    )
 
-  if @user.save
-    redirect_to users_path, notice: "User was successfully created!"
-  else
-    flash.now[:alert] = @user.errors.full_messages.to_sentence
-    render :new, status: :unprocessable_entity
+    if @user.save
+      redirect_to users_path, notice: "User was successfully created!"
+    else
+      flash.now[:alert] = @user.errors.full_messages.to_sentence
+      render :new, status: :unprocessable_entity
+    end
   end
-end
-
-
 
   def edit
         authorize User
   end
 
-def update
-      authorize User
+  def update
+        authorize User
 
-  filtered_params = user_params
+    filtered_params = user_params
 
-  if filtered_params[:password].blank?
-    filtered_params = filtered_params.except(:password, :password_confirmation)
+    if filtered_params[:password].blank?
+      filtered_params = filtered_params.except(:password, :password_confirmation)
+    end
+
+    if @user.update(filtered_params)
+      redirect_to users_path, notice: "User updated successfully!"
+    else
+      flash.now[:alert] = @user.errors.full_messages.to_sentence
+      render :edit, status: :unprocessable_entity
+    end
   end
 
-  if @user.update(filtered_params)
-    redirect_to users_path, notice: "User updated successfully!"
-  else
-    flash.now[:alert] = @user.errors.full_messages.to_sentence
-    render :edit, status: :unprocessable_entity
+  def destroy
+        authorize User
+
+    @user = User.find(params[:id])
+    @user.destroy
+    redirect_to users_path, notice: "User deleted successfully!"
   end
-end
-
-
-
-def destroy
-      authorize User
-
-  @user = User.find(params[:id])
-  @user.destroy
-  redirect_to users_path, notice: "User deleted successfully!"
-end
-
-
-
 
   # Profile Management
-
   def profile
     @user = current_user
   end
 
- def updateProfilePhoto
-  @user = current_user
+  def update_profile_photo
+    @user = current_user
 
-  if params[:profile_photo].present?
-    if @user.update(profile_photo: params[:profile_photo])
-      redirect_back(fallback_location: root_path, notice: "Photo updated successfully!")
+    if params[:profile_photo].present?
+      if @user.update(profile_photo: params[:profile_photo])
+        redirect_back(fallback_location: root_path, notice: "Photo updated successfully!")
+      else
+        flash[:alert] = @user.errors.full_messages.to_sentence
+        redirect_back(fallback_location: root_path)
+      end
     else
-      flash[:alert] = @user.errors.full_messages.to_sentence
+      flash[:alert] = "Please select a file first."
       redirect_back(fallback_location: root_path)
     end
-  else
-    flash[:alert] = "Please select a file first."
-    redirect_back(fallback_location: root_path)
   end
- end
 
-
-  def updateProfile
+  def update_profile
     @user = current_user
 
     if @user.update(profile_params)
@@ -115,9 +106,6 @@ end
     end
   end
 
-
-
-
   private
 
   def set_user
@@ -130,7 +118,7 @@ end
       :email,
       :password,
       :password_confirmation,
-      :roles,
+      :role,
       :status
     )
   end
