@@ -110,6 +110,10 @@ class BugsController < ApplicationController
         @bug.resolve! if @bug.may_resolve?
       when "closed"
         @bug.close! if @bug.may_close?
+      when "assigned"
+        @bug.assign! if @bug.may_assign?
+        @bug.start_date = ""
+        @bug.end_date = ""
       when "reopened"
         @bug.reopen! if @bug.may_reopen?
       else

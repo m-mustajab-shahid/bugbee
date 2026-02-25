@@ -42,7 +42,7 @@
                 <span class="badge bg-secondary">Unassigned</span>
                 <% end %>
             </p>
-            <% if (current_user.role == "developer" && ["assigned", "in_progress"].include?(@bug.status)) || ["project_manager", "admin"].include?(current_user.role) %>
+            <% if (current_user.role == "developer" && ["assigned", "in_progress"].include?(@bug.status)) || (["project_manager", "admin"].include?(current_user.role) && ["resolved", "reopened", "closed"].include?(@bug.status)) %>
             <%= form_with model: [@project, @bug], url: change_status_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
             <%= f.select :status, options_for_select(@allowed_status.map { |s| [s[:state].to_s.humanize, s[:state]] }), { include_blank: "Select" }, { class: "form-control mr-2" } %>
             <%= f.submit "Change Status", class: "btn btn-primary btn-sm mt-2" %>
