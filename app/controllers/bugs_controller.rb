@@ -16,6 +16,7 @@ class BugsController < ApplicationController
       @bugs = @bugs.tester_bugs(@user)
     end
     # TODO: convert into single filter map (OPTIONAL)
+    # @bugs = @bugs.where(status: params[:status]).or(priority: params[:priority]).orWhere(severity: params[:severity]).orWhere(assignee_id: params[:assignee_id])
     @bugs = @bugs.where(status: params[:status]) if params[:status].present?
     @bugs = @bugs.where(priority: params[:priority]) if params[:priority].present?
     @bugs = @bugs.where(severity: params[:severity]) if params[:severity].present?
