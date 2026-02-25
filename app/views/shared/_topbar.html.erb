@@ -1,23 +1,9 @@
-<!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-    <!-- Sidebar Toggle (Topbar) -->
     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
         <i class="fa fa-bars"></i>
     </button>
-
-
-
-    <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
-
-
-
-
-
         <div class="topbar-divider d-none d-sm-block"></div>
-
-        <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
             <div class="dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,22 +16,16 @@
                         <%= current_user.full_name.split.map(&:first).join.upcase %>
                     </div>
                     <% end %>
-
                 </a>
-
                 <ul class="dropdown-menu">
                     <a class="dropdown-item" href="/profile">
                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                         Profile
                     </a>
-
                     <div class="dropdown-divider"></div>
                     <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "dropdown-item text-danger" %>
                 </ul>
             </div>
         </li>
-
     </ul>
-
 </nav>
-<!-- End of Topbar -->

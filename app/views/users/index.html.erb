@@ -1,15 +1,10 @@
 <div class="container-fluid">
-
-    <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Users</h1>
         <a href="/users/new" class="btn btn-primary btn-sm shadow-sm">
             Create New User
         </a>
     </div>
-
-
-            <%= render "table", collection: @users %>
-
-
+    <%= render "shared/response" %>
+    <%= render "table", collection: @users %>
 </div>

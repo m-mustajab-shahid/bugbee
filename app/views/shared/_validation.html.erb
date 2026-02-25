@@ -1,0 +1,10 @@
+<% if @var.errors.any? %>
+<div class="alert alert-danger">
+    <h5><%= pluralize(@var.errors.count, "error") %> prohibited this from being saved:</h5>
+    <ul>
+        <% @var.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+        <% end %>
+    </ul>
+</div>
+<% end %>

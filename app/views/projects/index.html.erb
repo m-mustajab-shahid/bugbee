@@ -1,25 +1,8 @@
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Projects</h1>
-                        <a href="/projects/new" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i>Create New Project</a>
-                    </div>
-
-
-                    <!-- Flash Messages -->
-                    <% if flash[:notice] %>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <%= flash[:notice] %>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <% end %>
-
-                    <% if flash[:alert] %>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <%= flash[:alert] %>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <% end %>
-                    <%= render "table", collection: @projects %>
-                </div>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Projects</h1>
+        <a href="/projects/new" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i>Create New Project</a>
+    </div>
+    <%= render "shared/response" %>
+    <%= render "table", collection: @projects %>
+</div>

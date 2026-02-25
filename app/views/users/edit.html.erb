@@ -1,28 +1,18 @@
 <div class="container-fluid">
-
     <h1 class="h3 mb-2 text-gray-800">
         Edit User <b><%= @user.full_name %></b>
     </h1>
-
+    <%= render "shared/response" %>
+    <% @var = @user %>
+    <%= render "shared/validation", var: @var %>
     <div class="card shadow mb-4">
         <div class="card-body">
             <%= render "form", user: @user%>
-            <!-- Flash Messages -->
-            <% if flash[:notice] %>
-            <div class="alert alert-success mt-3"><%= flash[:notice] %></div>
-            <% end %>
-
-            <% if flash[:alert] %>
-            <div class="alert alert-danger mt-3"><%= flash[:alert] %></div>
-            <% end %>
-
         </div>
     </div>
 </div>
-
 <script>
     function togglePassword(fieldId) {
         var field = document.getElementById(fieldId);
-        field.type = field.type === "password" ? "text" : "password";
-    }
+        field.type = field.type === "password" ? "text" : "password";}
 </script>

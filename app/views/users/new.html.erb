@@ -1,37 +1,16 @@
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Create New User</h1>
-
-    <%# Flash Messages %>
-    <% if flash[:notice] %>
-    <div class="alert alert-success"><%= flash[:notice] %></div>
-    <% end %>
-
-    <% if flash[:alert] %>
-    <div class="alert alert-danger"><%= flash[:alert] %></div>
-    <% end %>
-
-    <%# Validation Errors %>
-    <% if @user.errors.any? %>
-    <div class="alert alert-danger">
-        <h5><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h5>
-        <ul>
-            <% @user.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-            <% end %>
-        </ul>
-    </div>
-    <% end %>
-
+    <%= render "shared/response" %>
+    <% @var = @user%>
+    <%= render "shared/validation", var: @var %>
     <div class="card shadow mb-4">
         <div class="card-body">
            <%= render "form", user: @user %>
         </div>
     </div>
 </div>
-
 <script>
     function togglePass(id) {
         var x = document.getElementById(id);
-        x.type = (x.type === "password") ? "text" : "password";
-    }
+        x.type = (x.type === "password") ? "text" : "password";}
 </script>

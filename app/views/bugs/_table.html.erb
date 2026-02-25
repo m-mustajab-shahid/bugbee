@@ -1,0 +1,104 @@
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h4>Filters</h4>
+        <%= form_with url: project_bugs_path(@project), method: :get, local: true, class: "form-inline mb-4" do |f| %>
+        <%= f.select :status, ["open", "in-progress", "assigned" ,"resolved", "closed"], 
+                                { include_blank: "Status", selected: params[:status] }, 
+                                { class: "form-control mr-2", style: "text-transform: capitalize" } %>
+
+        <%= f.select :priority, ["low", "medium", "high", "critical"], 
+                                { include_blank: "Priority", selected: params[:priority] }, 
+                                { class: "form-control mr-2", style: "text-transform: capitalize" } %>
+
+        <%= f.select :severity, ["minor", "major", "blocker"], 
+                                { include_blank: "Severity", selected: params[:severity] }, 
+                                { class: "form-control mr-2", style: "text-transform: capitalize" } %>
+
+        <%= f.collection_select :assignee_id, User.all, :id, :full_name, 
+                                { include_blank: "Assignee", selected: params[:assignee_id] }, 
+                                { class: "form-control mr-2" } %>
+
+        <div class="input-group mr-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">From</span>
+            </div>
+            <%= f.date_field :start_date, value: params[:start_date], class: "form-control" %>
+        </div>
+
+        <div class="input-group mr-2">
+            <div class="input-group-prepend">
+                <span class="input-group-text">To</span>
+            </div>
+            <%= f.date_field :end_date, value: params[:end_date], class: "form-control" %>
+        </div>
+        <%= f.submit "Filter", class: "btn btn-outline-primary" %>
+        <%= link_to "Clear", project_bugs_path(@project), class: "btn btn-link text-muted" %>
+        <% end %>
+        <h4>Searching</h4>
+        <%= form_with url: project_bugs_path(@project), method: :get, local: true, class: "form-inline mb-4" do |f| %>
+        <%= f.text_field :search, class: "form-control mr-2" %>
+        <%= f.submit "Search", class: "btn btn-outline-primary" %>
+        <%= link_to "Clear", project_bugs_path(@project), class: "btn btn-link text-muted" %>
+        <% end %>
+        <div class="mb-3 d-flex justify-content-end">
+            <form method="get" class="form-inline">
+                <label class="mr-2" for="per_page">Bugs per page:</label>
+                <select name="per_page" id="per_page" class="form-control form-control-sm" onchange="this.form.submit()">
+                    <% [3, 5, 10, 20, 50].each do |limit| %>
+                    <option value="<%= limit %>" <%= 'selected' if params[:per_page].to_i == limit %>><%= limit %></option>
+                    <% end %>
+                </select>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Severity</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot class="thead-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Severity</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <% @bugs.each do |bug| %>
+                    <tr>
+                        <td><%= bug.title %></td>
+                        <td><%= bug.priority %></td>
+                        <td><%= bug.severity %></td>
+                        <td><%= bug.start_date %></td>
+                        <td><%= bug.end_date %></td>
+                        <td style="text-transform: capitalize"><%= bug.status %></td>
+                        <td class="d-flex">
+                            <%= link_to "Show", project_bug_path(bug.project, bug), class: "btn btn-primary" %>
+                            <%= link_to "Edit",edit_project_bug_path(bug.project, bug), class: "btn btn-success mx-2" %>
+                            <%= button_to "Delete",
+                                                    project_bug_path(bug.project, bug),
+                                                    method: :delete,
+                                                    class: "btn btn-danger mx-2",
+                                                    form: { data: { turbo_confirm: "Are you sure you want to delete this bug?" } } %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center mt-3">
+                <%= paginate @bugs %>
+            </div>
+        </div>
+    </div>
+</div>

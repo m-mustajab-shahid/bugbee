@@ -1,9 +1,5 @@
-<%= form_with model: user, 
-              url: (user.new_record? ? create_user_path : user_path(user)), 
-              method: (user.new_record? ? :post : :patch), 
-              local: true do |f| %>
+<%= form_with model: user,  url: (user.new_record? ? create_user_path : user_path(user)), method: (user.new_record? ? :post : :patch), local: true do |f| %>
 <div class="row">
-    <!-- Left Column -->
     <div class="col-lg-6 mb-4">
         <div class="mb-3">
             <%= f.label :full_name, class: "form-label" %>
@@ -28,7 +24,6 @@
         </div>
     </div>
 
-    <!-- Right Column -->
     <div class="col-lg-6 mb-4">
         <div class="mb-3">
             <%= f.label :email, class: "form-label" %>

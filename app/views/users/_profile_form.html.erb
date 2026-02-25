@@ -1,0 +1,32 @@
+<%= form_with url: update_profile_path, method: :post do |f| %>
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="mb-3">
+            <%= f.label :full_name, class:"form-label" %>
+            <%= f.text_field :full_name, value: current_user.full_name, class: "form-control" %>
+        </div>
+        <div class="mb-3">
+            <%= f.label :password, class:"form-label" %>
+            <%= f.password_field :password, class: "form-control", id: "passwordInput" %>
+            <div id="password-error" style="color: red; font-size: 0.8rem;"></div>
+            <input type="checkbox" class="mx-1" onclick="showPassword()">Show Password
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="mb-3">
+            <%= f.label :email, class:"form-label" %>
+            <input type="email" value=<%=current_user.email%> class="form-control" disabled %>
+        </div>
+        <div class="mb-3">
+            <%= f.label :confirmPassword, class:"form-label" %>
+            <%= f.password_field :confirmPassword, class: "form-control", id: "confirmPasswordInput" %>
+            <input type="checkbox" class="mx-1" onclick="showConfirmPassword()">Show Password
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="mb-3">
+            <%= f.submit "Submit", class:"btn btn-primary" %>
+        </div>
+    </div>
+</div>
+<%end%>

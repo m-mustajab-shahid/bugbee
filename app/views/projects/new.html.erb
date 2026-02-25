@@ -1,33 +1,7 @@
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Create New Project</h1>
-
-    <%# Flash Messages %>
-    <% if flash[:notice] %>
-    <div class="alert alert-success"><%= flash[:notice] %></div>
-    <% end %>
-
-    <% if flash[:alert] %>
-    <div class="alert alert-danger"><%= flash[:alert] %></div>
-    <% end %>
-
-    <%# Validation Errors %>
-    <% if @project.errors.any? %>
-    <div class="alert alert-danger">
-        <h5><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h5>
-        <ul>
-            <% @project.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-            <% end %>
-        </ul>
-    </div>
-    <% end %>
-
+    <%= render "shared/response" %>
+    <% @var = @project %>
+    <%= render "shared/validation", var: @var %>    
     <%= render "form", project: @project %>
 </div>
-
-<script>
-    function togglePass(id) {
-        var x = document.getElementById(id);
-        x.type = (x.type === "password") ? "text" : "password";
-    }
-</script>

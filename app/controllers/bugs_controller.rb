@@ -3,7 +3,7 @@ class BugsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user
   before_action :set_bug, only: [ :show, :edit, :update, :destroy, :assign_developer, :changet_to_in_progress, :change_to_close, :change_to_reopen, :change_to_resolve ]
-  before_action :set_project, only: [ :index, :new, :show, :edit, :update, :destroy, :assign_developer, :changet_to_in_progress, :change_to_close, :change_to_reopen, :change_to_resolve, :add_bug_comments ]
+  before_action :set_project, only: [ :index, :new, :show, :create,  :edit, :update, :destroy, :assign_developer, :changet_to_in_progress, :change_to_close, :change_to_reopen, :change_to_resolve, :add_bug_comments ]
 
   def index
     per_page = params[:per_page].presence || 3
