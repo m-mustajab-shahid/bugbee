@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.5.2)
+      concurrent-ruby (~> 1.0)
     action_text-trix (2.1.16)
       railties
     actioncable (8.1.2)
@@ -390,6 +392,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  aasm
   bcrypt (~> 3.1.7)
   bootsnap
   brakeman

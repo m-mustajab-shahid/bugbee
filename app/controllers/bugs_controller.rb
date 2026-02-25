@@ -2,8 +2,8 @@ class BugsController < ApplicationController
   layout "admin"
   before_action :authenticate_user!
   before_action :set_user
-  before_action :set_bug, only: [ :show, :edit, :update, :destroy, :assign_developer, :changet_to_in_progress, :change_to_close, :change_to_reopen, :change_to_resolve ]
-  before_action :set_project, only: [ :index, :new, :show, :create,  :edit, :update, :destroy, :assign_developer, :changet_to_in_progress, :change_to_close, :change_to_reopen, :change_to_resolve, :add_bug_comments ]
+  before_action :set_bug, only: [ :show, :edit, :update, :destroy, :assign_developer, :change_status ]
+  before_action :set_project, only: [ :index, :new, :show, :create,  :edit, :update, :destroy, :assign_developer, :change_status, :add_bug_comments ]
 
   def index
     per_page = params[:per_page].presence || 3
@@ -32,6 +32,7 @@ class BugsController < ApplicationController
     @developers = @project.users.where(role: "developer").where(status: true)
     per_page = params[:per_page].presence || 3
     @comments = @bug.comments.page(params[:page]).per(per_page)
+    @allowed_status = @bug.aasm.permitted_transitions
   end
 
   def new
@@ -85,8 +86,8 @@ class BugsController < ApplicationController
 
   def assign_developer
     @bug = @project.bugs.find(params[:id])
-    @bug.status = "assigned"
     @user = User.find(params[:bug][:assignee_id])
+    @bug.assign!
     if @bug.update(assignee_id: params[:bug][:assignee_id])
       NotifierMailer.welcome_email(@user, @bug, @project).deliver_now
       redirect_to project_bug_path(@project, @bug), notice: "Developer assigned successfully!"
@@ -96,44 +97,36 @@ class BugsController < ApplicationController
     end
   end
 
-  def changet_to_in_progress
+  def change_status
     @bug = @project.bugs.find(params[:id])
-    if @bug.update(status: "in-progress", start_date: Date.today)
+    new_status = params[:bug][:status]
+    begin
+      case new_status
+      when "in_progress"
+        @bug.start_date = Date.today
+        @bug.start_progress! if @bug.may_start_progress?
+      when "resolved"
+        @bug.end_date = Date.today
+        @bug.resolve! if @bug.may_resolve?
+      when "closed"
+        @bug.close! if @bug.may_close?
+      when "reopened"
+        @bug.reopen! if @bug.may_reopen?
+      else
+        flash[:alert] = "Invalid status"
+        redirect_to project_bug_path(@project, @bug) and return
+      end
+
+      if @bug.save
         @comments = @bug.comments
-      redirect_to project_bug_path(@project, @bug), notice: "Status change to In-Progess"
-    else
-      flash.now[:alert] = @bug.errors.full_messages.to_sentence
-      render :show, status: :unprocessable_entity
-    end
-  end
-
-  def change_to_close
-    @bug = @project.bugs.find(params[:id])
-    if @bug.update(status: "closed")
-      redirect_to project_bug_path(@project, @bug), notice: "Status change to Closed"
-    else
-      flash.now[:alert] = @bug.errors.full_messages.to_sentence
-      render :show, status: :unprocessable_entity
-    end
-  end
-
-  def change_to_reopen
-    @bug = @project.bugs.find(params[:id])
-    if @bug.update(status: "reopened", start_date: nil, end_date: nil)
-      redirect_to project_bug_path(@project, @bug), notice: "Status change to Reopened"
-    else
-      flash.now[:alert] = @bug.errors.full_messages.to_sentence
-      render :show, status: :unprocessable_entity
-    end
-  end
-
-  def change_to_resolve
-    @bug = @project.bugs.find(params[:id])
-    if @bug.update(status: "resolved", end_date: Date.today)
-      redirect_to project_bug_path(@project, @bug), notice: "Status change to Resolved"
-    else
-      flash.now[:alert] = @bug.errors.full_messages.to_sentence
-      render :show, status: :unprocessable_entity
+        redirect_to project_bug_path(@project, @bug), notice: "Status changed successfully"
+      else
+        flash.now[:alert] = @bug.errors.full_messages.to_sentence
+        render :show, status: :unprocessable_entity
+      end
+    rescue AASM::InvalidTransition => e
+      flash[:alert] = "Cannot change status: #{e.message}"
+      redirect_to project_bug_path(@project, @bug)
     end
   end
 
@@ -150,6 +143,10 @@ class BugsController < ApplicationController
 
   def set_project
     @project = Project.find(params[:project_id])
+  end
+
+  def bug_status
+    params.require(:bug).permit(:status)
   end
 
   def bug_params

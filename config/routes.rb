@@ -7,10 +7,7 @@ Rails.application.routes.draw do
     end
     resources :bugs do
       patch :assign_developer, on: :member
-      patch :changet_to_in_progress, on: :member
-      patch :change_to_close, on: :member
-      patch :change_to_reopen, on: :member
-      patch :change_to_resolve, on: :member
+      patch :change_status, on: :member
       post :add_bug_comments, on: :member
     end
   end

@@ -42,47 +42,21 @@
                 <span class="badge bg-secondary">Unassigned</span>
                 <% end %>
             </p>
-            <% if current_user.role == "developer"%>
-            <% if @bug.status != "in_progress" && @bug.status != "resolved"%>
-
-            <%= form_with model: [@project, @bug], url: changet_to_in_progress_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
-            <%= f.hidden_field :status,value: "in_progress" %>
-            <%= f.submit "Change to in_progress", class: "btn btn-primary btn-sm" %>
-            <%end%>
-            <%end%>
-            <div class="mb-2">
-            </div>
-            <% if @bug.status == "in_progress" || @bug.status == "in-progress"%>
-            <%= form_with model: [@project, @bug], url: change_to_resolve_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
-            <%= f.hidden_field :status,value: "resolved" %>
-            <%= f.submit "Change to Resolved", class: "btn btn-success btn-sm" %>
-            <%end%>
-            <%end%>
-            <%end%>
+            <% if (current_user.role == "developer" && ["assigned", "in_progress"].include?(@bug.status)) || ["project_manager", "admin"].include?(current_user.role) %>
+            <%= form_with model: [@project, @bug], url: change_status_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
+            <%= f.select :status, options_for_select(@allowed_status.map { |s| [s[:state].to_s.humanize, s[:state]] }), { include_blank: "Select" }, { class: "form-control mr-2" } %>
+            <%= f.submit "Change Status", class: "btn btn-primary btn-sm mt-2" %>
+            <div class="mb-2"></div>
+            <% end %>
+            <% end %>
             </p>
             <%= current_user.full_name%>
-            <% if current_user.role == "admin" || current_user.role == "project_manager"%>
-            <% if @bug.status == "resolved"%>
-
-            <%= form_with model: [@project, @bug], url: change_to_close_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
-            <%= f.hidden_field :status,value: "closed" %>
-            <%= f.submit "Change to Close", class: "btn btn-primary btn-sm" %>
-            <%end%>
-            <%end%>
-            </p>
-            <% if @bug.status == "assigned" || @bug.status == "resolved"%>
-            <%= form_with model: [@project, @bug], url: change_to_reopen_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
-            <%= f.hidden_field :status,value: "reopened" %>
-            <%= f.submit "Change to Reopen", class: "btn btn-warning btn-sm" %>
-            <% end %>
-            <%end%>
-            <%end%>
             <hr>
             <p><strong>Steps to Reproduce:</strong><br><%= @bug.step_to_reproduce %></p>
             <p><strong>Expected Result:</strong><br><%= @bug.expected_results %></p>
             <p><strong>Actual Result:</strong><br><%= @bug.actual_result %></p>
             <hr>
-            <% if current_user.role == "admin" || current_user.role == "project_manager" %>
+            <% if current_user.role == "admin" || current_user.role == "project_manager" && @bug.status == "open" || @bug.status == "reopened"%>
             <h6 class="font-weight-bold text-primary">Assign to Developer</h6>
             <%= form_with model: [@project, @bug], url: assign_developer_project_bug_path(@project, @bug), method: :patch, local: true do |f| %>
             <div class="mb-3">

@@ -27,6 +27,7 @@ gem "pundit"
 
 gem "paranoia"
 
+gem "aasm"
 
 gem "rubocop", "~> 1.82", ">= 1.82.1"
 
