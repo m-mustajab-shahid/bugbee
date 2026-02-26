@@ -1,9 +1,11 @@
 class Bug < ApplicationRecord
   include AASM
+  acts_as_paranoid
   # Validations
   enum :priority, { low: "low", medium: "medium", high: "high", critical: "critical" }
   enum :severity, { minor: "minor", major: "major", blocker: "blocker" }
   validates :title, presence: true, length: { in: 5..150 }
+  validates :description, presence: true
 
   # Relationships
   has_many :comments, as: :commentable

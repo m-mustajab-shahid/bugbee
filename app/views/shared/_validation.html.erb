@@ -1,10 +1,13 @@
-<% if @var.errors.any? %>
-<div class="alert alert-danger">
-    <h5><%= pluralize(@var.errors.count, "error") %> prohibited this from being saved:</h5>
-    <ul>
-        <% @var.errors.full_messages.each do |message| %>
+<% if @var && @var.errors.any? %>
+  <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert" style="background: linear-gradient(135deg,#dc2626,#991b1b); color:white;">
+    <h5 class="mb-2" style="font-weight:600;">
+      <%= pluralize(@var.errors.count, "error") %> prohibited this <%= @var.class.name.downcase %> from being saved:
+    </h5>
+    <ul class="mb-0" style="padding-left:20px;">
+      <% @var.errors.full_messages.each do |message| %>
         <li><%= message %></li>
-        <% end %>
+      <% end %>
     </ul>
-</div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
 <% end %>

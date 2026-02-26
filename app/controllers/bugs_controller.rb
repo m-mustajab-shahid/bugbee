@@ -65,9 +65,12 @@ class BugsController < ApplicationController
   end
 
   def destroy
-    authorize User
-    @bug.destroy
-    redirect_to project_bugs_path(@project), notice: "Bug deleted successfully!"
+    authorize @bug
+    if @bug.destroy
+      redirect_to project_bugs_path(@project), notice: "Bug deleted successfully!"
+    else
+      redirect_to project_bugs_path(@project), alert: "Bug could not be deleted!"
+    end
   end
 
   def add_bug_comments
