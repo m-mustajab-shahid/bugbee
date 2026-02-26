@@ -12,7 +12,7 @@ class User < ApplicationRecord
 
   # Relationships
   has_one_attached :profile_photo
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable, :lockable
   has_and_belongs_to_many :projects
   has_many :comments, as: :commentable
   has_one :bug

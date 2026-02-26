@@ -89,7 +89,7 @@ class BugsController < ApplicationController
     @user = User.find(params[:bug][:assignee_id])
     @bug.assign!
     if @bug.update(assignee_id: params[:bug][:assignee_id])
-      NotifierMailer.welcome_email(@user, @bug, @project).deliver_now
+      NotifierMailer.welcome_email(@user, @bug, @project).deliver_later
       redirect_to project_bug_path(@project, @bug), notice: "Developer assigned successfully!"
     else
       flash.now[:alert] = @bug.errors.full_messages.to_sentence
