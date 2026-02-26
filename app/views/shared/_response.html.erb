@@ -1,13 +1,71 @@
-<% if flash[:notice] %>
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <%= flash[:notice] %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-<% end %>
+<% if flash[:notice] || flash[:alert] %>
+  <div id="customToast"
+       style="
+        position: fixed;
+        top: 25px;
+        right: 25px;
+        min-width: 320px;
+        max-width: 380px;
+        padding: 18px 22px;
+        border-radius: 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        color: #fff;
+        font-family: system-ui, -apple-system, sans-serif;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        backdrop-filter: blur(10px);
+        transform: translateX(120%);
+        opacity: 0;
+        transition: all 0.45s cubic-bezier(.68,-0.55,.27,1.55);
+        z-index: 9999;
+        <%= flash[:notice] ? 
+          'background: linear-gradient(135deg,#16a34a,#15803d);' : 
+          'background: linear-gradient(135deg,#dc2626,#991b1b);' %>
+       ">
 
-<% if flash[:alert] %>
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= flash[:alert] %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+    <!-- Icon -->
+    <div style="font-size:20px; margin-top:2px;">
+      <%= flash[:notice] ? "✔" : "✖" %>
+    </div>
+
+    <!-- Content -->
+    <div style="flex:1;">
+      <div style="font-weight:600; margin-bottom:4px;">
+        <%= flash[:notice] ? "Success" : "Error" %>
+      </div>
+      <div style="font-size:14px; opacity:0.9;">
+        <%= flash[:notice] || flash[:alert] %>
+      </div>
+    </div>
+
+    <!-- Close -->
+    <div style="cursor:pointer; font-size:18px;"
+         onclick="this.parentElement.remove()">
+      ✕
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      function showToast() {
+        const toast = document.getElementById("customToast");
+        if (!toast) return;
+
+        requestAnimationFrame(() => {
+          toast.style.transform = "translateX(0)";
+          toast.style.opacity = "1";
+        });
+
+        setTimeout(() => {
+          toast.style.transform = "translateX(120%)";
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 400);
+        }, 4000);
+      }
+
+      document.addEventListener("turbo:load", showToast);
+      document.addEventListener("DOMContentLoaded", showToast);
+    })();
+  </script>
 <% end %>
