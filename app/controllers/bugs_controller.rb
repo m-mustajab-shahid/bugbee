@@ -15,12 +15,9 @@ class BugsController < ApplicationController
     if current_user.role == "tester"
       @bugs = @bugs.tester_bugs(@user)
     end
-    # TODO: convert into single filter map (OPTIONAL)
-    # @bugs = @bugs.where(status: params[:status]).or(priority: params[:priority]).orWhere(severity: params[:severity]).orWhere(assignee_id: params[:assignee_id])
-    @bugs = @bugs.where(status: params[:status]) if params[:status].present?
-    @bugs = @bugs.where(priority: params[:priority]) if params[:priority].present?
-    @bugs = @bugs.where(severity: params[:severity]) if params[:severity].present?
-    @bugs = @bugs.where(assignee_id: params[:assignee_id]) if params[:assignee_id].present?
+    # TODO: convert into single filter map (OPTIONAL) (Done)
+    filtering_params = params.permit(:status, :priority, :severity, :assignee_id).compact_blank
+    @bugs = @bugs.where(filtering_params)
     if params[:start_date].present? && params[:end_date].present?
       @bugs = @bugs.where(start_date: params[:start_date]..params[:end_date])
     end
