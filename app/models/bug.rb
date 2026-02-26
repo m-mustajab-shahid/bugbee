@@ -47,19 +47,4 @@ class Bug < ApplicationRecord
       transitions from: [ :resolved, :closed ], to: :reopened
     end
   end
-  def admin?
-    role == "admin"
-  end
-
-  def project_manager?
-    role == "project_manager"
-  end
-
-  def developer?
-    role == "developer"
-  end
-
-  def tester?
-    role == "tester"
-  end
 end

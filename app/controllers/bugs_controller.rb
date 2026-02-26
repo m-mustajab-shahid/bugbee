@@ -26,7 +26,7 @@ class BugsController < ApplicationController
   end
 
   def show
-    @developers = @project.users.where(role: "developer").where(status: true)
+    @developers = @project.users.developer.where(status: true)
     per_page = params[:per_page].presence || 3
     @comments = @bug.comments.page(params[:page]).per(per_page)
     @allowed_status = @bug.aasm.permitted_transitions
@@ -34,13 +34,16 @@ class BugsController < ApplicationController
 
   def new
     authorize Bug
+
     @bug = @project.bugs.build
   end
 
   def create
     authorize Bug
+
     @bug = @project.bugs.build(bug_params)
     @bug.reporter = @user
+
     if @bug.save
       redirect_to project_bug_path(@project, @bug), notice: "Bug was successfully created!"
     else
@@ -55,6 +58,7 @@ class BugsController < ApplicationController
 
   def update
     authorize Bug
+
     @bug = @project.bugs.find(params[:id])
     if @bug.update(bug_params)
       redirect_to project_bug_path(@project, @bug), notice: "Bug was successfully updated!"

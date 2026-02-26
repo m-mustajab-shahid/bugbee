@@ -16,22 +16,4 @@ class User < ApplicationRecord
   has_and_belongs_to_many :projects
   has_many :comments, as: :commentable
   has_one :bug
-
-  # TODO: Rename roles -> role, without losing any data + without updating exisiting migrations (Done)
-  # TODO: Convert into enum (Done)
-  def admin?
-    role == "admin"
-  end
-
-  def project_manager?
-    role == "project_manager"
-  end
-
-  def developer?
-    role == "developer"
-  end
-
-  def tester?
-    role == "tester"
-  end
 end
